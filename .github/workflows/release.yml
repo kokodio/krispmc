@@ -1,0 +1,43 @@
+name: release
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+      - name: setup jdk
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: setup gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: install build dependencies
+        run: brew install meson pkgconf libclc llvm spirv-llvm-translator
+      - name: cache natives
+        id: natives
+        uses: actions/cache@v5
+        with:
+          path: src/main/resources/natives/macos-arm64
+          key: natives-${{ hashFiles('scripts/build-natives.sh') }}
+      - name: build natives
+        if: steps.natives.outputs.cache-hit != 'true'
+        run: scripts/build-natives.sh
+      - name: build
+        run: ./gradlew build
+      - name: create GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: build/libs/krispmc-*[0-9].jar

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "krispmc",
+  "version": "${version}",
+  "name": "KrispMC",
+  "description": "Runs Minecraft's Vulkan renderer on KosmicKrisp instead of MoltenVK",
+  "authors": [
+    "kokodio"
+  ],
+  "contact": {
+    "homepage": "https://github.com/kokodio/krispmc",
+    "sources": "https://github.com/kokodio/krispmc"
+  },
+  "license": "MIT",
+  "icon": "assets/krispmc/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [
+      "com.krispmc.KrispMC"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25"
+  }
+}
